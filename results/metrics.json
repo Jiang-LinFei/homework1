@@ -10,10 +10,11 @@
   "test_samples": 1500,
   "test_MAE_normalized": 0.4462,
   "test_RMSE_normalized": 0.7494,
-  "test_MAE_mph": 8.998,
-  "test_RMSE_mph": 15.112,
-  "speed_mean_mph": 53.6,
-  "speed_std_mph": 20.165,
+  "test_MAE_mph": 9.041,
+  "test_RMSE_mph": 15.184,
+  "test_MAPE_pct": 18.994,
+  "speed_mean_mph": 53.719,
+  "speed_std_mph": 20.261,
   "final_train_mse": 0.3715,
   "note": "MAE/RMSE 同时给出 z-score 归一化尺度与还原后的真实速度(mph)尺度"
 }

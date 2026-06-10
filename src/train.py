@@ -25,7 +25,7 @@ from torch_geometric_temporal.dataset import METRLADatasetLoader
 from torch_geometric_temporal.signal import temporal_signal_split
 
 from model import A3TGCNModel
-from utils import mae, rmse, speed_stats
+from utils import mae, mape, rmse, speed_stats
 
 RESULTS_DIR = os.path.join(os.path.dirname(__file__), "..", "results")
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
@@ -80,6 +80,10 @@ def evaluate(model, loader, edge_index, edge_weight):
             out = model(x, edge_index, edge_weight)
             preds.append(out)
             trues.append(y)
+    if not preds:
+        raise RuntimeError(
+            "评估集为空: 测试样本数小于 batch_size, 所有批次都被丢弃。"
+            "请增大 --max-samples 或减小 --batch-size。")
     pred = torch.cat(preds)
     true = torch.cat(trues)
     return mae(pred, true), rmse(pred, true), pred, true
@@ -144,9 +148,13 @@ def main():
         os.path.join(DATA_DIR, "node_values.npy"))
     test_mae_mph = test_mae * speed_std
     test_rmse_mph = test_rmse * speed_std
+    # 在真实速度尺度上计算 MAPE (掩掉 METR-LA 用 0 表示的缺失值)
+    pred_mph = pred * speed_std + speed_mean
+    true_mph = true * speed_std + speed_mean
+    test_mape = mape(pred_mph, true_mph)
     print(f"测试集(归一化)  MAE={test_mae:.4f}  RMSE={test_rmse:.4f}")
     print(f"测试集(真实速度)  MAE={test_mae_mph:.3f} mph  "
-          f"RMSE={test_rmse_mph:.3f} mph")
+          f"RMSE={test_rmse_mph:.3f} mph  MAPE={test_mape:.2f}%")
 
     metrics = {
         "dataset": "METR-LA (207 sensors, Los Angeles, 2012.03-2012.06)",
@@ -162,6 +170,7 @@ def main():
         "test_RMSE_normalized": round(test_rmse, 4),
         "test_MAE_mph": round(test_mae_mph, 3),
         "test_RMSE_mph": round(test_rmse_mph, 3),
+        "test_MAPE_pct": round(test_mape, 3),
         "speed_mean_mph": round(speed_mean, 3),
         "speed_std_mph": round(speed_std, 3),
         "final_train_mse": round(history[-1], 4) if history else None,
