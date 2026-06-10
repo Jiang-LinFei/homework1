@@ -1,0 +1,19 @@
+# Maven 构建输出
+target/
+dependency-reduced-pom.xml
+
+# 运行时生成的数据库（首次启动会按 database/init.sql 自动生成）
+data/
+*.db
+
+# 用户上传的文件
+uploads/
+
+# 编译产物与日志
+*.class
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/

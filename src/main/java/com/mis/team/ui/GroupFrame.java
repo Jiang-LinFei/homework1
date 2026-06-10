@@ -196,6 +196,9 @@ public class GroupFrame extends JFrame {
                 boolean leader = "leader".equals(roles.get(s.getId()));
                 membersList.add(createMemberChip(s.getName(), leader));
             }
+            if (sidebar != null) {
+                sidebar.setMemberCount(members.size());
+            }
         } catch (SQLException ex) {
             membersList.add(createBullet("加载成员失败"));
         }

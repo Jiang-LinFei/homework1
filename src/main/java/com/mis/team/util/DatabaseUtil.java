@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -42,6 +43,9 @@ public final class DatabaseUtil {
     }
 
     private static void initDatabase() throws SQLException {
+        if (isAlreadyInitialized()) {
+            return;
+        }
         Path sqlFile = Path.of("database", "init.sql");
         if (!Files.exists(sqlFile)) {
             sqlFile = Path.of(System.getProperty("user.dir"), "database", "init.sql");
@@ -54,6 +58,20 @@ public final class DatabaseUtil {
             executeScript(sql);
         } catch (IOException e) {
             throw new SQLException("读取初始化脚本失败", e);
+        }
+    }
+
+    /**
+     * 判断数据库是否已初始化过。脚本中的示例消息/任务/通知没有唯一约束，
+     * 若每次启动都重新执行 init.sql，这些种子数据会被反复插入而不断累积。
+     * 因此只在数据库为全新（students 表不存在或为空）时才执行初始化脚本。
+     */
+    private static boolean isAlreadyInitialized() {
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM students")) {
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            return false;
         }
     }
 

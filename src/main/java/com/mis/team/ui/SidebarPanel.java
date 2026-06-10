@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 public class SidebarPanel extends JPanel {
     private final Map<String, RoundedButton> buttons = new LinkedHashMap<>();
     private Consumer<String> onNavigate;
+    private JLabel onlineLabel;
 
     public SidebarPanel(String title, String subtitle) {
         setLayout(new BorderLayout());
@@ -46,7 +47,7 @@ public class SidebarPanel extends JPanel {
         navPanel.setOpaque(false);
         navPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 12, 0, 12));
 
-        JLabel onlineLabel = new JLabel("当前在线：4人");
+        onlineLabel = new JLabel("小组成员：-");
         onlineLabel.setFont(UITheme.FONT_SMALL);
         onlineLabel.setForeground(new java.awt.Color(180, 200, 230));
         onlineLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(16, 16, 16, 16));
@@ -76,6 +77,11 @@ public class SidebarPanel extends JPanel {
 
     public void setOnNavigate(Consumer<String> onNavigate) {
         this.onNavigate = onNavigate;
+    }
+
+    /** 更新底部状态标签为当前小组的真实成员人数。 */
+    public void setMemberCount(int count) {
+        onlineLabel.setText("小组成员：" + count + "人");
     }
 
     public void highlight(String key) {
