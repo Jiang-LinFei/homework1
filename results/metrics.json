@@ -1,0 +1,19 @@
+{
+  "dataset": "METR-LA (207 sensors, Los Angeles, 2012.03-2012.06)",
+  "model": "A3T-GCN (Attention Temporal Graph Convolutional Network)",
+  "epochs": 30,
+  "batch_size": 32,
+  "lr": 0.01,
+  "periods_in": 12,
+  "periods_out": 12,
+  "train_samples": 6000,
+  "test_samples": 1500,
+  "test_MAE_normalized": 0.4462,
+  "test_RMSE_normalized": 0.7494,
+  "test_MAE_mph": 8.998,
+  "test_RMSE_mph": 15.112,
+  "speed_mean_mph": 53.6,
+  "speed_std_mph": 20.165,
+  "final_train_mse": 0.3715,
+  "note": "MAE/RMSE 同时给出 z-score 归一化尺度与还原后的真实速度(mph)尺度"
+}

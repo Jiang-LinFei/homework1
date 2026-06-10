@@ -1,0 +1,12 @@
+# 完整原始数据集 (体积过大, 训练时自动下载到 data/)
+data/METR-LA.zip
+data/node_values.npy
+data/adj_mat.npy
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+.venv/
+venv/
