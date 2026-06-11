@@ -3,3 +3,7 @@
 .metadata
 .settings
 build/
+
+# 编译输出（源码在 src/，部署时由 javac 生成）
+WebContent/WEB-INF/classes/
+*.class
