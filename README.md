@@ -29,12 +29,25 @@
 - MySQL 5.7+ / MariaDB 10.4+
 - Redis 5+
 
-## 快速开始
+## 快速开始（Windows 一键脚本）
+
+在项目根目录用 PowerShell 执行（需安装 Docker Desktop，脚本会自动拉起 MySQL 与 Redis 容器）：
+
+```powershell
+# 若提示禁止运行脚本，先执行一次：
+# Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+.\run.ps1
+```
+
+脚本会自动完成：建虚拟环境 → 装依赖 → 启动 MySQL/Redis → 迁移 → 演示数据 → 启动服务。
+
+## 快速开始（Linux / macOS / 手动）
 
 ```bash
 # 1. 创建并激活虚拟环境
 python3 -m venv .venv
 source .venv/bin/activate
+# Windows PowerShell 激活方式： .\.venv\Scripts\Activate.ps1
 
 # 2. 安装依赖
 pip install -r requirements.txt
