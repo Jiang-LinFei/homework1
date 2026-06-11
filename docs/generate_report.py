@@ -26,8 +26,10 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Pt
 
-# 记录正文标题, 供生成目录使用: 元素为 (级别, 文本)
+# 记录正文标题, 供生成目录使用: 元素为 (级别, 文本, 书签名)
 HEADINGS = []
+# 书签自增 id, 保证文档内唯一
+_BOOKMARK_ID = [1000]
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 TEMPLATE = os.path.join(os.path.dirname(__file__), "template.docx")
@@ -71,23 +73,39 @@ def set_cn_font(run, name="宋体", size=12, bold=False):
         rfonts.set(qn(attr), name)
 
 
-def add_heading(doc, text, level=1):
+def add_heading(doc, text, level=1, page_break_before=False):
     """手动格式化标题并设置大纲级别(outlineLvl), 使目录(TOC)域可自动识别。
 
     模板未内置 Heading 样式, 因此不依赖样式, 而是直接在段落属性中写入
     w:outlineLvl, Word 的 TOC 域配合 \\u 开关即可按大纲级别收录标题。
+
+    同时在标题处写入书签(bookmark), 供静态目录的超链接锚点跳转使用;
+    ``page_break_before`` 为真时让该标题另起一页(大章节分页)。
     """
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(8)
     p.paragraph_format.space_after = Pt(6)
     p.paragraph_format.keep_with_next = True
+    if page_break_before:
+        p.paragraph_format.page_break_before = True
     ppr = p._element.get_or_add_pPr()
     ol = OxmlElement("w:outlineLvl")
     ol.set(qn("w:val"), str(level - 1))
     ppr.append(ol)
+    # 在标题文字两侧插入书签, 作为目录超链接的跳转锚点
+    bm_name = f"_Toc_h{len(HEADINGS)}"
+    bm_id = str(_BOOKMARK_ID[0])
+    _BOOKMARK_ID[0] += 1
+    bm_start = OxmlElement("w:bookmarkStart")
+    bm_start.set(qn("w:id"), bm_id)
+    bm_start.set(qn("w:name"), bm_name)
+    p._element.append(bm_start)
     run = p.add_run(text)
     set_cn_font(run, name="黑体", size=15 - 2 * (level - 1), bold=True)
-    HEADINGS.append((level, text))
+    bm_end = OxmlElement("w:bookmarkEnd")
+    bm_end.set(qn("w:id"), bm_id)
+    p._element.append(bm_end)
+    HEADINGS.append((level, text, bm_name))
     return p
 
 
@@ -211,10 +229,9 @@ def build_report(doc, m):
     doc.add_page_break()
     add_centered(doc, "目录", size=18)
     add_toc(doc)
-    doc.add_page_break()
 
     # ---- 1 研究目的 ----
-    add_heading(doc, "1 研究目的", 1)
+    add_heading(doc, "1 研究目的", 1, page_break_before=True)
     add_body(doc,
         "随着城市机动车保有量的持续增长, 交通拥堵已成为制约城市运行效率的突出问题。"
         "智能交通系统通过对交通状态的实时感知与短时预测, 能够为交通管理与出行决策提供"
@@ -245,7 +262,7 @@ def build_report(doc, m):
         "实验细节, 使读者能够据此独立复现全部结果。")
 
     # ---- 2 数据获取 ----
-    add_heading(doc, "2 数据获取", 1)
+    add_heading(doc, "2 数据获取", 1, page_break_before=True)
     add_heading(doc, "2.1 数据集介绍", 2)
     add_body(doc,
         "本文采用交通预测领域广泛使用的公开数据集 METR-LA。该数据集采集自美国洛杉矶"
@@ -275,7 +292,7 @@ def build_report(doc, m):
         "通过 .gitignore 排除, 避免提交上百兆的原始文件)。")
 
     # ---- 3 数据预处理 ----
-    add_heading(doc, "3 数据预处理", 1)
+    add_heading(doc, "3 数据预处理", 1, page_break_before=True)
     add_body(doc,
         "原始速度数据在直接用于训练前需要经过若干预处理步骤, 以消除量纲影响、显式刻画"
         "周期性并构造适合时空图神经网络的样本格式。本文的数据预处理流程主要包括归一化、"
@@ -303,7 +320,7 @@ def build_report(doc, m):
         "当设为 0 时使用全部样本, 便于在不同算力下灵活复现。")
 
     # ---- 4 模型与方法 ----
-    add_heading(doc, "4 模型与方法：A3T-GCN", 1)
+    add_heading(doc, "4 模型与方法：A3T-GCN", 1, page_break_before=True)
     add_heading(doc, "4.1 问题定义", 2)
     add_body(doc,
         "交通速度预测可形式化为一个时空序列到序列的回归问题: 给定历史 P 个时间步的特征"
@@ -348,7 +365,7 @@ def build_report(doc, m):
         "与数据工具)三个文件中, 结构清晰、便于复用。")
 
     # ---- 5 实验与结果分析 ----
-    add_heading(doc, "5 实验与结果分析", 1)
+    add_heading(doc, "5 实验与结果分析", 1, page_break_before=True)
     add_heading(doc, "5.1 实验环境与超参数", 2)
     add_body(doc,
         f"实验在 CPU 环境下完成。优化器采用 Adam, 学习率为 {m['lr']}, 损失函数为均方误差"
@@ -406,7 +423,7 @@ def build_report(doc, m):
         "均衡能力。")
 
     # ---- 6 结论与展望 ----
-    add_heading(doc, "6 结论与展望", 1)
+    add_heading(doc, "6 结论与展望", 1, page_break_before=True)
     add_body(doc,
         "本文针对城市交通速度预测这一实际问题, 采用注意力时空图卷积网络 A3T-GCN, 在真实"
         "路网数据集 METR-LA 上完成了未来 1 小时车速的多步预测。实验验证了图神经网络在"
@@ -417,7 +434,7 @@ def build_report(doc, m):
         "Transformer 等结构, 并在 GPU 上使用全量数据进行训练以追求更高精度。")
 
     # ---- 参考文献 ----
-    add_heading(doc, "参考文献", 1)
+    add_heading(doc, "参考文献", 1, page_break_before=True)
     refs = [
         "[1] Zhu J, Song Y, Zhao L, et al. A3T-GCN: Attention Temporal Graph "
         "Convolutional Network for Traffic Forecasting[J]. ISPRS International "
@@ -442,8 +459,7 @@ def build_report(doc, m):
         set_cn_font(p.add_run(r), "宋体", 10.5)
 
     # ---- 附录1 相关代码及操作 ----
-    doc.add_page_break()
-    add_heading(doc, "附录1 相关代码及操作", 1)
+    add_heading(doc, "附录1 相关代码及操作", 1, page_break_before=True)
     add_heading(doc, "附1.1 实验过程", 2)
     add_body(doc,
         "1. 环境准备: 创建 Python 虚拟环境, 安装 torch、torch-geometric、"
@@ -526,7 +542,7 @@ def build_report(doc, m):
         "收获之一。")
 
     # ---- 附录2 查重报告 ----
-    add_heading(doc, "附录2 查重报告", 1)
+    add_heading(doc, "附录2 查重报告", 1, page_break_before=True)
     add_body(doc,
         "本报告所涉及的文字内容、代码与实验结果均为作者独立完成, 引用他人成果均已在"
         "参考文献中标注。查重报告由学校指定的论文检测系统(如中国知网、维普等)生成, "
@@ -551,12 +567,11 @@ def _find_toc_paragraph(doc):
 
 
 def _page_map(pdf_path):
-    """利用 pdftotext 逐页文本, 返回 (标题去空白 -> 物理页码) 的查找函数所需数据。"""
+    """利用 pdftotext 逐页文本, 返回每页的 (原始文本, 去空白文本) 二元组列表。"""
     txt = subprocess.run(["pdftotext", "-layout", pdf_path, "-"],
                          capture_output=True, check=True).stdout.decode("utf-8", "replace")
     pages = txt.split("\f")
-    norm_pages = ["".join(pg.split()) for pg in pages]  # 去掉所有空白
-    return norm_pages
+    return [(pg, "".join(pg.split())) for pg in pages]
 
 
 def _usable_width_emu(doc):
@@ -564,8 +579,41 @@ def _usable_width_emu(doc):
     return int(sec.page_width) - int(sec.left_margin) - int(sec.right_margin)
 
 
+def _render_page_map_for_toc(path):
+    """把成稿渲染为 PDF, 返回逐页的 (原始文本, 去空白文本) 列表。
+
+    目录条目就位后再渲染, 页码才会计入目录自身占用的版面; 同时由于目录条目与
+    正文标题文字相同, 检索时需借助原始文本中的点导线(dot leader)识别并跳过目录页
+    (见 ``_is_toc_page``), 使标题只在正文处被命中。
+
+    依赖 libreoffice 与 pdftotext; 任一缺失或失败返回 None(由调用方回退)。
+    """
+    soffice = shutil.which("libreoffice") or shutil.which("soffice")
+    if not soffice or not shutil.which("pdftotext"):
+        return None
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            subprocess.run([soffice, "--headless", "--convert-to", "pdf",
+                            "--outdir", td, path], check=True,
+                           capture_output=True, timeout=180)
+            pdfs = [f for f in os.listdir(td) if f.endswith(".pdf")]
+            if not pdfs:
+                return None
+            return _page_map(os.path.join(td, pdfs[0]))
+    except Exception:  # noqa: BLE001 - 渲染失败时由调用方安全回退
+        return None
+
+
+def _is_toc_page(raw_text):
+    """目录页含大量点导线(右对齐制表位的 dot leader); 正文页几乎没有。"""
+    return raw_text.count("...") >= 10
+
+
 def bake_static_toc(path):
-    """渲染 PDF 计算页码, 把 TOC 域替换为带页码的静态目录。
+    """把 TOC 域替换为可点击跳转、带正确页码的静态目录。
+
+    1) 在每个条目外包裹指向标题书签的内部超链接(w:hyperlink/@w:anchor), 实现点击跳转;
+    2) 在目录条目就位后再渲染计算页码, 使页码计入目录自身占用的版面, 避免错位。
 
     依赖 libreoffice 与 pdftotext; 任一缺失或失败则保留自动更新域(回退), 不报错。
     """
@@ -574,23 +622,6 @@ def bake_static_toc(path):
         print("[目录] 未检测到 libreoffice/pdftotext, 保留自动更新目录域。")
         return
     try:
-        with tempfile.TemporaryDirectory() as td:
-            subprocess.run([soffice, "--headless", "--convert-to", "pdf",
-                            "--outdir", td, path], check=True,
-                           capture_output=True, timeout=180)
-            pdfs = [f for f in os.listdir(td) if f.endswith(".pdf")]
-            if not pdfs:
-                print("[目录] PDF 渲染失败, 保留自动更新目录域。")
-                return
-            norm_pages = _page_map(os.path.join(td, pdfs[0]))
-
-        def page_of(text):
-            key = "".join(text.split())
-            for i, pg in enumerate(norm_pages, start=1):
-                if key in pg:
-                    return i
-            return None
-
         doc = Document(path)
         toc_p = _find_toc_paragraph(doc)
         if toc_p is None:
@@ -598,10 +629,9 @@ def bake_static_toc(path):
             return
         width = _usable_width_emu(doc)
         anchor = toc_p._element
-        # 自标题首次出现的页码; 目录条目按记录顺序输出
         from docx.text.paragraph import Paragraph
-        for level, text in HEADINGS:
-            pg = page_of(text)
+        entries = []  # (页码所在 run, 标题文本); 页码待版面确定后回填
+        for level, text, bm_name in HEADINGS:
             new_p = OxmlElement("w:p")
             anchor.addprevious(new_p)
             para = Paragraph(new_p, toc_p._parent)
@@ -611,12 +641,39 @@ def bake_static_toc(path):
                 para.paragraph_format.left_indent = Pt(18)
             ts = para.paragraph_format.tab_stops
             ts.add_tab_stop(width, WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS)
-            run = para.add_run(text + "\t" + (str(pg) if pg else ""))
+            run = para.add_run(text + "\t")  # 页码随后回填
             set_cn_font(run, "宋体", 11.5 if level == 1 else 10.5,
                         bold=(level == 1))
+            # 用超链接包裹整条目录条目, 锚点指向标题书签, 实现点击跳转
+            hyperlink = OxmlElement("w:hyperlink")
+            hyperlink.set(qn("w:anchor"), bm_name)
+            run_el = run._element
+            new_p.remove(run_el)
+            hyperlink.append(run_el)
+            new_p.append(hyperlink)
+            entries.append((run, text))
         anchor.getparent().remove(anchor)  # 删除原 TOC 域
         doc.save(path)
-        print("[目录] 已生成带页码的静态目录。")
+
+        # 目录条目已就位, 再渲染计算真实页码(计入目录自身页数)并回填
+        page_data = _render_page_map_for_toc(path)
+        if page_data is not None:
+            def page_of(text):
+                key = "".join(text.split())
+                for i, (raw, norm) in enumerate(page_data, start=1):
+                    if _is_toc_page(raw):  # 跳过目录页, 命中正文标题
+                        continue
+                    if key in norm:
+                        return i
+                return None
+            for run, text in entries:
+                pg = page_of(text)
+                if pg:
+                    run.text = run.text + str(pg)
+            doc.save(path)
+            print("[目录] 已生成可点击跳转的带页码静态目录。")
+        else:
+            print("[目录] 已生成可点击跳转的静态目录(页码渲染不可用, 已省略)。")
     except Exception as e:  # noqa: BLE001 - 渲染失败时安全回退
         print(f"[目录] 生成静态目录失败({e}), 保留自动更新目录域。")
 
