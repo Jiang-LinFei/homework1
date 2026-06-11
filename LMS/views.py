@@ -101,7 +101,14 @@ def register(request):
 
 def index(request):
     uname = request.session.get('uname')
-    return render(request, 'index.html', {'uname': uname})
+    if not uname:
+        return redirect('/')
+    return render(request, 'index.html', {
+        'uname': uname,
+        'date': time.strftime("%Y-%m-%d"),
+        'start_time': request.session.get('start_time', ''),
+        'end_time': request.session.get('end_time', ''),
+    })
 
 
 def allTask(req):
@@ -253,53 +260,56 @@ def readFile(filename, chunk_size=512):
 
 
 def attendance(req):
-    if req.COOKIES.get('cookie_uname', ''):
-        uname = req.COOKIES.get('cookie_uname', '')
-    else:
-        return HttpResponseRedirect("login")
-    Method = req.method
-    curtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-
-    date = now().date() + timedelta(days=0)
-    global start_time
-    global end_time
-    global start
-    if Method == 'POST':
+    """上机签到：上班/下班/退出。签到状态存于 session。"""
+    uname = req.session.get('uname')
+    if not uname:
+        return redirect('/')
+    curtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+    today = time.strftime("%Y-%m-%d")
+    if req.method == 'POST':
         if 'start' in req.POST:
-            start_time = time.strftime("%H:%M:%S", time.localtime())
-            start = datetime.datetime.now()
-            response = HttpResponseRedirect('index')
-            response.set_cookie('cookie_start_time', start_time)
-            return response
-
+            req.session['start_time'] = time.strftime("%H:%M:%S")
+            req.session['start_ts'] = time.time()
+            req.session['end_time'] = ''
+            return redirect('/index/')
         if 'end' in req.POST:
-            end_time = time.strftime("%H:%M:%S", time.localtime())
-            end = datetime.datetime.now()
-            time_length = (end - start).seconds
-            DailyTime.objects.create(id=curtime, date=date, start_time=start_time, end_time=end_time,
-                                     uname=uname, time_length=time_length)
-            response = HttpResponseRedirect('index')
-            response.set_cookie('cookie_end_time', end_time)
-            return response
-
+            end_time = time.strftime("%H:%M:%S")
+            start_ts = req.session.get('start_ts', time.time())
+            time_length = int(time.time() - start_ts)
+            DailyTime.objects.create(id=curtime + '-' + str(uname), date=today,
+                                     start_time=req.session.get('start_time', ''),
+                                     end_time=end_time, uname=uname, time_length=str(time_length))
+            req.session['end_time'] = end_time
+            return redirect('/index/')
         if 'cancel' in req.POST:
-            response = HttpResponseRedirect("login")
-            response.delete_cookie('cookie_start_time')
-            response.delete_cookie('cookie_end_time')
-            return response
-        if 'submit' in req.POST:
-            reason = req.POST.get("reason")
-            leave_time = req.POST.get("leave_time")
-            DailyTime.objects.create(id=curtime, date=date, reason=reason, leave_time=leave_time,
-                                     uname=uname, time_length=leave_time)
-            return HttpResponseRedirect("index")
+            return redirect('/logout/')
+    return redirect('/index/')
 
-    return render(req, 'index.html', {'uname': uname, 'start_time': req.COOKIES.get('cookie_start_time', ''),
-                                      'end_time': req.COOKIES.get('cookie_end_time', ''), 'date': date})
+
+def qingjia(req):
+    """请假：提交请假申请并展示请假记录。"""
+    uname = req.session.get('uname')
+    if not uname:
+        return redirect('/')
+    if req.method == 'POST' and 'submit' in req.POST:
+        reason = req.POST.get('reason') or ''
+        leave_time = req.POST.get('leave_time') or '0'
+        leave_start = req.POST.get('leave_start') or time.strftime("%Y-%m-%d")
+        leave_end = req.POST.get('leave_end') or ''
+        curtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        DailyTime.objects.create(id=curtime + '-' + str(uname), date=leave_start,
+                                 start_time=leave_start, end_time=leave_end,
+                                 reason=reason, leave_time=leave_time,
+                                 uname=uname, time_length=leave_time)
+        return redirect('/qingjia/')
+    leaves = DailyTime.objects.exclude(reason__isnull=True).exclude(reason='').order_by('-id')
+    return render(req, 'qingjia.html', {'uname': uname, 'leaves': leaves})
 
 
 def attendance_check(req):
-    uname = req.COOKIES.get('cookie_uname', '')
+    uname = req.session.get('uname')
+    if not uname:
+        return redirect('/')
     Method = req.method
     row_tuple = ()
 

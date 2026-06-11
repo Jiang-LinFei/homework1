@@ -35,10 +35,10 @@
                             <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">用户名</strong>
                              </span> <span class="text-muted text-xs block">导航<b class="caret"></b></span> </span> </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a href="index.html">查看签到</a></li>
+                                <li><a href="/index/">查看签到</a></li>
                                 <li><a href="zongrenwu.html">查看总任务</a></li>
                                 <li class="divider"></li>
-                                <li><a href="login.html">登出</a></li>
+                                <li><a href="/logout/">登出</a></li>
                             </ul>
                         </div>
                         <div class="logo-element">
@@ -46,11 +46,11 @@
                         </div>
                     </li>
                     <li class="active">
-                        <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">签到系统</span> <span class="fa arrow"></span></a>
+                        <a href="/index/"><i class="fa fa-th-large"></i> <span class="nav-label">签到系统</span> <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="index.html">查看当日签到</a></li>
-                            <li><a href="qingjia.html">请假</a></li>
-                            <li class="active"><a href="monthqiandao.html">本月签到查看</a></li>
+                            <li><a href="/index/">查看当日签到</a></li>
+                            <li><a href="/qingjia/">请假</a></li>
+                            <li class="active"><a href="/monthqiandao/">本月签到查看</a></li>
                         </ul>
                     </li>
                     <li>
@@ -127,7 +127,7 @@
 		                </li>
 		
 		                <li>
-		                    <a href="login.html">
+		                    <a href="/logout/">
 		                        <i class="fa fa-sign-out"></i> 注销
 		                    </a>
 		                </li>
@@ -145,21 +145,18 @@
                             <h5>本月签到查看</h5>
                         </div>
                         <div class="ibox-content">
+                            <form method="POST" action="/monthqiandao/">
+                            {% csrf_token %}
                             <div class="row">
-                                <div class="col-sm-4 m-b-xs">
-                                    <div data-toggle="buttons" class="btn-group">
-									
-                                        <label class="btn btn-sm btn-white active"> <input type="radio" id="option1" name="day"> 日 </label>
-                                        <label class="btn btn-sm btn-white "> <input type="radio" id="option2" name="week"> 周 </label>
-                                        <label class="btn btn-sm btn-white"> <input type="radio" id="option3" name="month"> 月 </label>
+                                <div class="col-sm-6 m-b-xs">
+                                    <div class="btn-group">
+                                        <button type="submit" name="day" value="1" class="btn btn-sm btn-white">日</button>
+                                        <button type="submit" name="week" value="1" class="btn btn-sm btn-white">周</button>
+                                        <button type="submit" name="month" value="1" class="btn btn-sm btn-primary">月</button>
                                     </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <div class="input-group"><input type="text" placeholder="查找" class="input-sm form-control"> <span class="input-group-btn">
-                                        <button type="button" class="btn btn-sm btn-success btn-outline"> <i class="fa fa-search text-navy"></i></button> </span></div>
-                                </div>
                             </div>
-							{% csrf_token %}
+                            </form>
                             <div class="table-responsive">
 							
                                 <table class="table table-striped footable toggle-arrow-tiny" data-page-size="15">

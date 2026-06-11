@@ -9,20 +9,20 @@
     <title>机房信息管理系统</title>
     <link rel="icon" type="image/x-icon" href="favorite.ico" />
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet">
 
     <!-- FooTable -->
     
-    <link href="css/plugins/footable/footable.core.css" rel="stylesheet">
+    <link href="/static/css/plugins/footable/footable.core.css" rel="stylesheet">
 
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="/static/css/animate.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
 
-    <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-    <link href="css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/static/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="/static/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     
-    <link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+    <link href="/static/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
 
 </head>
 
@@ -44,7 +44,7 @@
                                 <li><a href="profile.html">查看签到</a></li>
                                 <li><a href="contacts.html">查看任务</a></li>
                                 <li class="divider"></li>
-                                <li><a href="login.html">登出</a></li>
+                                <li><a href="/logout/">登出</a></li>
                             </ul>
                         </div>
                         <div class="logo-element">
@@ -52,18 +52,18 @@
                         </div>
                     </li>
                     <li class="active">
-                        <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">签到系统</span> <span class="fa arrow"></span></a>
+                        <a href="/index/"><i class="fa fa-th-large"></i> <span class="nav-label">签到系统</span> <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="index.html">查看当日签到</a></li>
-                            <li class="active"><a href="qingjia.html">请假</a></li>
-                            <li><a href="monthqiandao.html">本月签到查看</a></li>
+                            <li><a href="/index/">查看当日签到</a></li>
+                            <li class="active"><a href="/qingjia/">请假</a></li>
+                            <li><a href="/monthqiandao/">本月签到查看</a></li>
                         </ul>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">任务查看</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
-                            <li><a href="allTask.html">领取任务</a></li>
-                            <li><a href="myWork.html">我的任务</a></li>
+                            <li><a href="/allTask/">领取任务</a></li>
+                            <li><a href="/myWork/">我的任务</a></li>
                            
                         </ul>
                     </li>
@@ -124,7 +124,7 @@
 		                        <li class="divider"></li>
 		                        <li>
 		                            <div class="text-center link-block">
-		                                <a href="allTask.html">
+		                                <a href="/allTask/">
 		                                    <i class="fa fa-envelope"></i> <strong>查看全部任务</strong>
 		                                </a>
 		                            </div>
@@ -133,7 +133,7 @@
 		                </li>
 		
 		                <li>
-		                    <a href="login.html">
+		                    <a href="/logout/">
 		                        <i class="fa fa-sign-out"></i> 注销
 		                    </a>
 		                </li>
@@ -147,44 +147,39 @@
 
 
             <div class="ibox-content m-b-sm border-bottom">
+                <form method="POST" action="/qingjia/">
+                {% csrf_token %}
                 <div class="row">
                     <div class="form-group col-sm-4" id="data_5">
-                                <label class="control-label">请选择日期</label>
+                                <label class="control-label">请假日期</label>
                                 <div class="input-daterange input-group" id="datepicker">
-                                    <input type="text" class="form-control" name="start"/>
+                                    <input type="text" class="form-control" name="leave_start" placeholder="开始日期"/>
                                     <span class="input-group-addon">到</span>
-                                    <input type="text" class="form-control" name="end" />
+                                    <input type="text" class="form-control" name="leave_end" placeholder="结束日期" />
                                 </div>
                     </div>
-                    <div class="form-group col-sm-4">
-		                   <label class="control-label">请选择时间</label>
-		                   <div class="input-daterange input-group">
-			                    <div class="input-group clockpicker" data-autoclose="true">
-				                    <input type="text" class="form-control">
-			                    </div>
-			                    <span class="input-group-addon">到</span>
-			                    <div class="input-group clockpicker" data-autoclose="true">
-			                        <input type="text" class="form-control">
-			                    </div>
-			                </div>
+                    <div class="form-group col-sm-3">
+		                   <label class="control-label">请假时长(小时)</label>
+		                   <input type="text" class="form-control" name="leave_time" placeholder="如 8" />
 	                </div>
-	                <div class="col-sm-2">
+	                <div class="col-sm-3">
                         <div class="form-group">
-                            <label class="control-label" for="status">选择请假原因</label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="1" selected>七天无理由请假</option>
-                                <option value="0">肚子疼</option>
-                                <option value="2">谈恋爱</option>
-                                <option value="3">出差</option>
-                                <option value="4">回家</option>
+                            <label class="control-label" for="reason">选择请假原因</label>
+                            <select name="reason" id="reason" class="form-control">
+                                <option value="七天无理由请假" selected>七天无理由请假</option>
+                                <option value="肚子疼">肚子疼</option>
+                                <option value="谈恋爱">谈恋爱</option>
+                                <option value="出差">出差</option>
+                                <option value="回家">回家</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-sm-2">
-                    	<button class="btn btn-success btn-rounded dim qingjia">确认请假</button>
+                    	<button type="submit" name="submit" class="btn btn-success btn-rounded dim">确认请假</button>
                     </div>
                    
                 </div>
+                </form>
 
             </div>
 
@@ -208,53 +203,23 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {% for leave in leaves %}
                                 <tr>
-                                    <td>
-                                       123456
-                                    </td>
-                                    <td>
-                                        	沈朦瑶
-                                    </td>
-                                    <td>
-                                        	七天无理由请假
-                                    </td>
-                                    <td>
-                                        2018年8月10日
-                                    </td>
-                                    <td>
-                                        2019年1月1日
-                                    </td>
-                                    <td>
-                                        365天3小时6分
-                                    </td>
+                                    <td>{{ leave.uname }}</td>
+                                    <td>{{ leave.uname }}</td>
+                                    <td>{{ leave.reason }}</td>
+                                    <td>{{ leave.start_time }}</td>
+                                    <td>{{ leave.end_time }}</td>
+                                    <td>{{ leave.leave_time }} 小时</td>
                                     <td class="text-right">
                                         <label class="badge badge-success">通过</label>
                                     </td>
                                 </tr>
+                                {% empty %}
                                 <tr>
-                                    <td>
-                                       123456
-                                    </td>
-                                    <td>
-                                        	沈朦瑶
-                                    </td>
-                                    <td>
-                                        	七天无理由请假
-                                    </td>
-                                    <td>
-                                        2018年8月10日
-                                    </td>
-                                    <td>
-                                        2019年1月1日
-                                    </td>
-                                    <td>
-                                        365天3小时6分
-                                    </td>
-                                    <td class="text-right">
-                                        <label class="badge badge-danger">未通过</label>
-                                    </td>
+                                    <td colspan="7" class="text-center">暂无请假记录</td>
                                 </tr>
-                                
+                                {% endfor %}
 
 
                                 </tbody>
@@ -281,22 +246,22 @@
 
 
     <!-- Mainly scripts -->
-    <script src="js/jquery-3.1.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
-    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/static/js/jquery-3.1.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
     <!-- Custom and plugin javascript -->
-    <script src="js/inspinia.js"></script>
-    <script src="js/plugins/pace/pace.min.js"></script>
+    <script src="/static/js/inspinia.js"></script>
+    <script src="/static/js/plugins/pace/pace.min.js"></script>
 
     <!-- Data picker -->
-    <script src="js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>
     
-    <script src="js/plugins/clockpicker/clockpicker.js"></script>
-    <script src="js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/static/js/plugins/clockpicker/clockpicker.js"></script>
+    <script src="/static/js/plugins/sweetalert/sweetalert.min.js"></script>
     <!-- FooTable -->
-    <script src="js/plugins/footable/footable.all.min.js"></script>
+    <script src="/static/js/plugins/footable/footable.all.min.js"></script>
 
     <!-- Page-Level Scripts -->
     <script>
