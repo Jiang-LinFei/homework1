@@ -175,12 +175,12 @@ button:hover{
 	<div class="md-overlay"></div>
 	<!-- the overlay element -->
 
-	<!-- classie.js by @desandro: https://github.com/desandro/classie -->
+	<!-- classie.js by @desandro:  -->
 	<script src="../public/js/classie.js"></script>
 	<script src="../public/js/modalEffects.js"></script>
 
 	<!-- for the blur effect -->
-	<!-- by @derSchepp https://github.com/Schepp/CSS-Filters-Polyfill -->
+	<!-- by @derSchepp  -->
 	<script>
 		// this is important for IEs
 		var polyfilter_scriptpath = '/js/';

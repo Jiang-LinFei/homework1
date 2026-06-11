@@ -110,7 +110,7 @@ var isWindow = function isWindow( obj ) {
 				// On the other hand, just using `getAttribute` is not enough as
 				// the `nonce` attribute is reset to an empty string whenever it
 				// becomes browsing-context connected.
-				// See https://github.com/whatwg/html/issues/2369
+				// See 
 				// See https://html.spec.whatwg.org/#nonce-attributes
 				// The `node.getAttribute` check was added for the sake of
 				// `jQuery.globalEval` so that it can fake a nonce-containing node
@@ -1587,7 +1587,7 @@ Sizzle.uniqueSort = function( results ) {
 	}
 
 	// Clear input after sorting to release objects
-	// See https://github.com/jquery/sizzle/pull/225
+	// See 
 	sortInput = null;
 
 	return results;
@@ -5773,7 +5773,7 @@ var
 
 	/* eslint-disable max-len */
 
-	// See https://github.com/eslint/eslint/issues/3229
+	// See 
 	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi,
 
 	/* eslint-enable */
@@ -10553,7 +10553,7 @@ jQuery.isNumeric = function( obj ) {
 // Note that for maximum portability, libraries that are not jQuery should
 // declare themselves as anonymous modules, and avoid setting a global if an
 // AMD loader is present. jQuery is a special case. For more information, see
-// https://github.com/jrburke/requirejs/wiki/Updating-existing-libraries#wiki-anon
+// 
 
 if ( typeof define === "function" && define.amd ) {
 	define( "jquery", [], function() {
@@ -10585,7 +10585,7 @@ jQuery.noConflict = function( deep ) {
 };
 
 // Expose jQuery and $ identifiers, even in AMD
-// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
+// (#7102#comment:10, )
 // and CommonJS for browser emulators (#13566)
 if ( !noGlobal ) {
 	window.jQuery = window.$ = jQuery;

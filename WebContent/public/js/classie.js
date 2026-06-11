@@ -1,6 +1,6 @@
 /*!
  * classie - class helper functions
- * from bonzo https://github.com/ded/bonzo
+ * from bonzo 
  * 
  * classie.has( elem, 'my-class' ) -> true/false
  * classie.add( elem, 'my-new-class' )
@@ -15,7 +15,7 @@
 
 'use strict';
 
-// class helper functions from bonzo https://github.com/ded/bonzo
+// class helper functions from bonzo 
 
 function classReg( className ) {
   return new RegExp("(^|\\s+)" + className + "(\\s+|$)");

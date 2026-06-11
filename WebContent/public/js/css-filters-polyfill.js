@@ -7,7 +7,7 @@
  * Version: 0.22
  *
  * URL:
- * https://github.com/Schepp/
+ * 
  *
  */
 ;(function(window){

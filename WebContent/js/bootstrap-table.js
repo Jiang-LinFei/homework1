@@ -16,7 +16,7 @@
 	  return it && it.Math == Math && it;
 	};
 
-	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+	// 
 	var global_1 =
 	  // eslint-disable-next-line no-undef
 	  check(typeof globalThis == 'object' && globalThis) ||
@@ -46,7 +46,7 @@
 	var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({ 1: 2 }, 1);
 
 	// `Object.prototype.propertyIsEnumerable` method implementation
-	// https://tc39.github.io/ecma262/#sec-object.prototype.propertyisenumerable
+	// 
 	var f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 	  var descriptor = getOwnPropertyDescriptor(this, V);
 	  return !!descriptor && descriptor.enumerable;
@@ -75,7 +75,7 @@
 
 	// fallback for non-array-like ES3 and non-enumerable old V8 strings
 	var indexedObject = fails(function () {
-	  // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
+	  // throws an error in rhino, see 
 	  // eslint-disable-next-line no-prototype-builtins
 	  return !Object('z').propertyIsEnumerable(0);
 	}) ? function (it) {
@@ -83,7 +83,7 @@
 	} : Object;
 
 	// `RequireObjectCoercible` abstract operation
-	// https://tc39.github.io/ecma262/#sec-requireobjectcoercible
+	// 
 	var requireObjectCoercible = function (it) {
 	  if (it == undefined) throw TypeError("Can't call method on " + it);
 	  return it;
@@ -102,7 +102,7 @@
 	};
 
 	// `ToPrimitive` abstract operation
-	// https://tc39.github.io/ecma262/#sec-toprimitive
+	// 
 	// instead of the ES6 spec version, we didn't implement @@toPrimitive case
 	// and the second argument - flag - preferred type is a string
 	var toPrimitive = function (input, PREFERRED_STRING) {
@@ -138,7 +138,7 @@
 	var nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 	// `Object.getOwnPropertyDescriptor` method
-	// https://tc39.github.io/ecma262/#sec-object.getownpropertydescriptor
+	// 
 	var f$1 = descriptors ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
 	  O = toIndexedObject(O);
 	  P = toPrimitive(P, true);
@@ -161,7 +161,7 @@
 	var nativeDefineProperty = Object.defineProperty;
 
 	// `Object.defineProperty` method
-	// https://tc39.github.io/ecma262/#sec-object.defineproperty
+	// 
 	var f$2 = descriptors ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
 	  anObject(O);
 	  P = toPrimitive(P, true);
@@ -337,7 +337,7 @@
 	var floor = Math.floor;
 
 	// `ToInteger` abstract operation
-	// https://tc39.github.io/ecma262/#sec-tointeger
+	// 
 	var toInteger = function (argument) {
 	  return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
 	};
@@ -345,7 +345,7 @@
 	var min = Math.min;
 
 	// `ToLength` abstract operation
-	// https://tc39.github.io/ecma262/#sec-tolength
+	// 
 	var toLength = function (argument) {
 	  return argument > 0 ? min(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
 	};
@@ -383,10 +383,10 @@
 
 	var arrayIncludes = {
 	  // `Array.prototype.includes` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.includes
+	  // 
 	  includes: createMethod(true),
 	  // `Array.prototype.indexOf` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.indexof
+	  // 
 	  indexOf: createMethod(false)
 	};
 
@@ -420,7 +420,7 @@
 	var hiddenKeys$1 = enumBugKeys.concat('length', 'prototype');
 
 	// `Object.getOwnPropertyNames` method
-	// https://tc39.github.io/ecma262/#sec-object.getownpropertynames
+	// 
 	var f$3 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 	  return objectKeysInternal(O, hiddenKeys$1);
 	};
@@ -539,25 +539,25 @@
 	  && typeof Symbol() == 'symbol';
 
 	// `IsArray` abstract operation
-	// https://tc39.github.io/ecma262/#sec-isarray
+	// 
 	var isArray = Array.isArray || function isArray(arg) {
 	  return classofRaw(arg) == 'Array';
 	};
 
 	// `ToObject` abstract operation
-	// https://tc39.github.io/ecma262/#sec-toobject
+	// 
 	var toObject = function (argument) {
 	  return Object(requireObjectCoercible(argument));
 	};
 
 	// `Object.keys` method
-	// https://tc39.github.io/ecma262/#sec-object.keys
+	// 
 	var objectKeys = Object.keys || function keys(O) {
 	  return objectKeysInternal(O, enumBugKeys);
 	};
 
 	// `Object.defineProperties` method
-	// https://tc39.github.io/ecma262/#sec-object.defineproperties
+	// 
 	var objectDefineProperties = descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
 	  anObject(O);
 	  var keys = objectKeys(Properties);
@@ -599,7 +599,7 @@
 	  var iframeDocument;
 	  iframe.style.display = 'none';
 	  html.appendChild(iframe);
-	  // https://github.com/zloirock/core-js/issues/475
+	  // 
 	  iframe.src = String(JS);
 	  iframeDocument = iframe.contentWindow.document;
 	  iframeDocument.open();
@@ -610,8 +610,8 @@
 
 	// Check for document.domain and active x support
 	// No need to use active x approach when document.domain is not set
-	// see https://github.com/es-shims/es5-shim/issues/150
-	// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+	// see 
+	// variation of 
 	// avoid IE GC bug
 	var activeXDocument;
 	var NullProtoObject = function () {
@@ -628,7 +628,7 @@
 	hiddenKeys[IE_PROTO] = true;
 
 	// `Object.create` method
-	// https://tc39.github.io/ecma262/#sec-object.create
+	// 
 	var objectCreate = Object.create || function create(O, Properties) {
 	  var result;
 	  if (O !== null) {
@@ -737,7 +737,7 @@
 	var SPECIES = wellKnownSymbol('species');
 
 	// `ArraySpeciesCreate` abstract operation
-	// https://tc39.github.io/ecma262/#sec-arrayspeciescreate
+	// 
 	var arraySpeciesCreate = function (originalArray, length) {
 	  var C;
 	  if (isArray(originalArray)) {
@@ -789,25 +789,25 @@
 
 	var arrayIteration = {
 	  // `Array.prototype.forEach` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+	  // 
 	  forEach: createMethod$1(0),
 	  // `Array.prototype.map` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.map
+	  // 
 	  map: createMethod$1(1),
 	  // `Array.prototype.filter` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.filter
+	  // 
 	  filter: createMethod$1(2),
 	  // `Array.prototype.some` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.some
+	  // 
 	  some: createMethod$1(3),
 	  // `Array.prototype.every` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.every
+	  // 
 	  every: createMethod$1(4),
 	  // `Array.prototype.find` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.find
+	  // 
 	  find: createMethod$1(5),
 	  // `Array.prototype.findIndex` method
-	  // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
+	  // 
 	  findIndex: createMethod$1(6)
 	};
 
@@ -832,7 +832,7 @@
 	var SymbolToStringRegistry = shared('symbol-to-string-registry');
 	var WellKnownSymbolsStore$1 = shared('wks');
 	var QObject = global_1.QObject;
-	// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
+	// Don't use setters in Qt Script, 
 	var USE_SETTER = !QObject || !QObject[PROTOTYPE$1] || !QObject[PROTOTYPE$1].findChild;
 
 	// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
@@ -936,7 +936,7 @@
 	};
 
 	// `Symbol` constructor
-	// https://tc39.github.io/ecma262/#sec-symbol-constructor
+	// 
 	if (!nativeSymbol) {
 	  $Symbol = function Symbol() {
 	    if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor');
@@ -962,7 +962,7 @@
 	  objectGetOwnPropertySymbols.f = $getOwnPropertySymbols;
 
 	  if (descriptors) {
-	    // https://github.com/tc39/proposal-Symbol-description
+	    // 
 	    nativeDefineProperty$1($Symbol[PROTOTYPE$1], 'description', {
 	      configurable: true,
 	      get: function description() {
@@ -991,7 +991,7 @@
 
 	_export({ target: SYMBOL, stat: true, forced: !nativeSymbol }, {
 	  // `Symbol.for` method
-	  // https://tc39.github.io/ecma262/#sec-symbol.for
+	  // 
 	  'for': function (key) {
 	    var string = String(key);
 	    if (has(StringToSymbolRegistry, string)) return StringToSymbolRegistry[string];
@@ -1001,7 +1001,7 @@
 	    return symbol;
 	  },
 	  // `Symbol.keyFor` method
-	  // https://tc39.github.io/ecma262/#sec-symbol.keyfor
+	  // 
 	  keyFor: function keyFor(sym) {
 	    if (!isSymbol(sym)) throw TypeError(sym + ' is not a symbol');
 	    if (has(SymbolToStringRegistry, sym)) return SymbolToStringRegistry[sym];
@@ -1012,25 +1012,25 @@
 
 	_export({ target: 'Object', stat: true, forced: !nativeSymbol, sham: !descriptors }, {
 	  // `Object.create` method
-	  // https://tc39.github.io/ecma262/#sec-object.create
+	  // 
 	  create: $create,
 	  // `Object.defineProperty` method
-	  // https://tc39.github.io/ecma262/#sec-object.defineproperty
+	  // 
 	  defineProperty: $defineProperty,
 	  // `Object.defineProperties` method
-	  // https://tc39.github.io/ecma262/#sec-object.defineproperties
+	  // 
 	  defineProperties: $defineProperties,
 	  // `Object.getOwnPropertyDescriptor` method
-	  // https://tc39.github.io/ecma262/#sec-object.getownpropertydescriptors
+	  // 
 	  getOwnPropertyDescriptor: $getOwnPropertyDescriptor
 	});
 
 	_export({ target: 'Object', stat: true, forced: !nativeSymbol }, {
 	  // `Object.getOwnPropertyNames` method
-	  // https://tc39.github.io/ecma262/#sec-object.getownpropertynames
+	  // 
 	  getOwnPropertyNames: $getOwnPropertyNames,
 	  // `Object.getOwnPropertySymbols` method
-	  // https://tc39.github.io/ecma262/#sec-object.getownpropertysymbols
+	  // 
 	  getOwnPropertySymbols: $getOwnPropertySymbols
 	});
 
@@ -1043,7 +1043,7 @@
 	});
 
 	// `JSON.stringify` method behavior with symbols
-	// https://tc39.github.io/ecma262/#sec-json.stringify
+	// 
 	if ($stringify) {
 	  var FORCED_JSON_STRINGIFY = !nativeSymbol || fails(function () {
 	    var symbol = $Symbol();
@@ -1075,12 +1075,12 @@
 	}
 
 	// `Symbol.prototype[@@toPrimitive]` method
-	// https://tc39.github.io/ecma262/#sec-symbol.prototype-@@toprimitive
+	// 
 	if (!$Symbol[PROTOTYPE$1][TO_PRIMITIVE]) {
 	  createNonEnumerableProperty($Symbol[PROTOTYPE$1], TO_PRIMITIVE, $Symbol[PROTOTYPE$1].valueOf);
 	}
 	// `Symbol.prototype[@@toStringTag]` property
-	// https://tc39.github.io/ecma262/#sec-symbol.prototype-@@tostringtag
+	// 
 	setToStringTag($Symbol, SYMBOL);
 
 	hiddenKeys[HIDDEN] = true;
@@ -1129,7 +1129,7 @@
 	}
 
 	// `Symbol.iterator` well-known symbol
-	// https://tc39.github.io/ecma262/#sec-symbol.iterator
+	// 
 	defineWellKnownSymbol('iterator');
 
 	var createProperty = function (object, key, value) {
@@ -1163,7 +1163,7 @@
 	var arrayMethodHasSpeciesSupport = function (METHOD_NAME) {
 	  // We can't use this feature detection in V8 since it causes
 	  // deoptimization and serious performance degradation
-	  // https://github.com/zloirock/core-js/issues/677
+	  // 
 	  return v8Version >= 51 || !fails(function () {
 	    var array = [];
 	    var constructor = array.constructor = {};
@@ -1180,7 +1180,7 @@
 
 	// We can't use this feature detection in V8 since it causes
 	// deoptimization and serious performance degradation
-	// https://github.com/zloirock/core-js/issues/679
+	// 
 	var IS_CONCAT_SPREADABLE_SUPPORT = v8Version >= 51 || !fails(function () {
 	  var array = [];
 	  array[IS_CONCAT_SPREADABLE] = false;
@@ -1198,7 +1198,7 @@
 	var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT;
 
 	// `Array.prototype.concat` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.concat
+	// 
 	// with adding support of @@isConcatSpreadable and @@species
 	_export({ target: 'Array', proto: true, forced: FORCED }, {
 	  concat: function concat(arg) { // eslint-disable-line no-unused-vars
@@ -1233,7 +1233,7 @@
 	});
 
 	// `Array.prototype.filter` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.filter
+	// 
 	// with adding support of @@species
 	_export({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH }, {
 	  filter: function filter(callbackfn /* , thisArg */) {
@@ -1245,7 +1245,7 @@
 	var ArrayPrototype = Array.prototype;
 
 	// Array.prototype[@@unscopables]
-	// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+	// 
 	if (ArrayPrototype[UNSCOPABLES] == undefined) {
 	  objectDefineProperty.f(ArrayPrototype, UNSCOPABLES, {
 	    configurable: true,
@@ -1268,14 +1268,14 @@
 	if (FIND in []) Array(1)[FIND](function () { SKIPS_HOLES = false; });
 
 	// `Array.prototype.find` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.find
+	// 
 	_export({ target: 'Array', proto: true, forced: SKIPS_HOLES }, {
 	  find: function find(callbackfn /* , that = undefined */) {
 	    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
 	  }
 	});
 
-	// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+	// 
 	addToUnscopables(FIND);
 
 	var $findIndex = arrayIteration.findIndex;
@@ -1288,28 +1288,28 @@
 	if (FIND_INDEX in []) Array(1)[FIND_INDEX](function () { SKIPS_HOLES$1 = false; });
 
 	// `Array.prototype.findIndex` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.findindex
+	// 
 	_export({ target: 'Array', proto: true, forced: SKIPS_HOLES$1 }, {
 	  findIndex: function findIndex(callbackfn /* , that = undefined */) {
 	    return $findIndex(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
 	  }
 	});
 
-	// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+	// 
 	addToUnscopables(FIND_INDEX);
 
 	var $includes = arrayIncludes.includes;
 
 
 	// `Array.prototype.includes` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.includes
+	// 
 	_export({ target: 'Array', proto: true }, {
 	  includes: function includes(el /* , fromIndex = 0 */) {
 	    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
 	  }
 	});
 
-	// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+	// 
 	addToUnscopables('includes');
 
 	var sloppyArrayMethod = function (METHOD_NAME, argument) {
@@ -1329,7 +1329,7 @@
 	var SLOPPY_METHOD = sloppyArrayMethod('indexOf');
 
 	// `Array.prototype.indexOf` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.indexof
+	// 
 	_export({ target: 'Array', proto: true, forced: NEGATIVE_ZERO || SLOPPY_METHOD }, {
 	  indexOf: function indexOf(searchElement /* , fromIndex = 0 */) {
 	    return NEGATIVE_ZERO
@@ -1349,7 +1349,7 @@
 	var ObjectPrototype$1 = Object.prototype;
 
 	// `Object.getPrototypeOf` method
-	// https://tc39.github.io/ecma262/#sec-object.getprototypeof
+	// 
 	var objectGetPrototypeOf = correctPrototypeGetter ? Object.getPrototypeOf : function (O) {
 	  O = toObject(O);
 	  if (has(O, IE_PROTO$1)) return O[IE_PROTO$1];
@@ -1364,7 +1364,7 @@
 	var returnThis = function () { return this; };
 
 	// `%IteratorPrototype%` object
-	// https://tc39.github.io/ecma262/#sec-%iteratorprototype%-object
+	// 
 	var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
 
 	if ([].keys) {
@@ -1405,7 +1405,7 @@
 	};
 
 	// `Object.setPrototypeOf` method
-	// https://tc39.github.io/ecma262/#sec-object.setprototypeof
+	// 
 	// Works with __proto__ only. Old v8 can't work with null proto objects.
 	/* eslint-disable no-proto */
 	var objectSetPrototypeOf = Object.setPrototypeOf || ('__proto__' in {} ? function () {
@@ -1507,15 +1507,15 @@
 	var getInternalState$1 = internalState.getterFor(ARRAY_ITERATOR);
 
 	// `Array.prototype.entries` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.entries
+	// 
 	// `Array.prototype.keys` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.keys
+	// 
 	// `Array.prototype.values` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.values
+	// 
 	// `Array.prototype[@@iterator]` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype-@@iterator
+	// 
 	// `CreateArrayIterator` internal method
-	// https://tc39.github.io/ecma262/#sec-createarrayiterator
+	// 
 	var es_array_iterator = defineIterator(Array, 'Array', function (iterated, kind) {
 	  setInternalState$1(this, {
 	    type: ARRAY_ITERATOR,
@@ -1524,7 +1524,7 @@
 	    kind: kind                         // kind
 	  });
 	// `%ArrayIteratorPrototype%.next` method
-	// https://tc39.github.io/ecma262/#sec-%arrayiteratorprototype%.next
+	// 
 	}, function () {
 	  var state = getInternalState$1(this);
 	  var target = state.target;
@@ -1539,7 +1539,7 @@
 	  return { value: [index, target[index]], done: false };
 	}, 'values');
 
-	// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+	// 
 	addToUnscopables('keys');
 	addToUnscopables('values');
 	addToUnscopables('entries');
@@ -1550,7 +1550,7 @@
 	var SLOPPY_METHOD$1 = sloppyArrayMethod('join', ',');
 
 	// `Array.prototype.join` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.join
+	// 
 	_export({ target: 'Array', proto: true, forced: ES3_STRINGS || SLOPPY_METHOD$1 }, {
 	  join: function join(separator) {
 	    return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
@@ -1568,7 +1568,7 @@
 	});
 
 	// `Array.prototype.map` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.map
+	// 
 	// with adding support of @@species
 	_export({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT$1 || !USES_TO_LENGTH$1 }, {
 	  map: function map(callbackfn /* , thisArg */) {
@@ -1580,7 +1580,7 @@
 	var test = [1, 2];
 
 	// `Array.prototype.reverse` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.reverse
+	// 
 	// fix for Safari 12.0 bug
 	// https://bugs.webkit.org/show_bug.cgi?id=188794
 	_export({ target: 'Array', proto: true, forced: String(test) === String(test.reverse()) }, {
@@ -1596,7 +1596,7 @@
 	var max$1 = Math.max;
 
 	// `Array.prototype.slice` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.slice
+	// 
 	// fallback for not array-like ES3 strings and DOM objects
 	_export({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('slice') }, {
 	  slice: function slice(start, end) {
@@ -1643,7 +1643,7 @@
 	var FORCED$1 = FAILS_ON_UNDEFINED || !FAILS_ON_NULL || SLOPPY_METHOD$2;
 
 	// `Array.prototype.sort` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.sort
+	// 
 	_export({ target: 'Array', proto: true, forced: FORCED$1 }, {
 	  sort: function sort(comparefn) {
 	    return comparefn === undefined
@@ -1658,7 +1658,7 @@
 	var MAXIMUM_ALLOWED_LENGTH_EXCEEDED = 'Maximum allowed length exceeded';
 
 	// `Array.prototype.splice` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.splice
+	// 
 	// with adding support of @@species
 	_export({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('splice') }, {
 	  splice: function splice(start, deleteCount /* , ...items */) {
@@ -1744,13 +1744,13 @@
 
 	var stringTrim = {
 	  // `String.prototype.{ trimLeft, trimStart }` methods
-	  // https://tc39.github.io/ecma262/#sec-string.prototype.trimstart
+	  // 
 	  start: createMethod$2(1),
 	  // `String.prototype.{ trimRight, trimEnd }` methods
-	  // https://tc39.github.io/ecma262/#sec-string.prototype.trimend
+	  // 
 	  end: createMethod$2(2),
 	  // `String.prototype.trim` method
-	  // https://tc39.github.io/ecma262/#sec-string.prototype.trim
+	  // 
 	  trim: createMethod$2(3)
 	};
 
@@ -1767,7 +1767,7 @@
 	var BROKEN_CLASSOF = classofRaw(objectCreate(NumberPrototype)) == NUMBER;
 
 	// `ToNumber` abstract operation
-	// https://tc39.github.io/ecma262/#sec-tonumber
+	// 
 	var toNumber = function (argument) {
 	  var it = toPrimitive(argument, false);
 	  var first, third, radix, maxCode, digits, length, index, code;
@@ -1796,7 +1796,7 @@
 	};
 
 	// `Number` constructor
-	// https://tc39.github.io/ecma262/#sec-number-constructor
+	// 
 	if (isForced_1(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumber('+0x1'))) {
 	  var NumberWrapper = function Number(value) {
 	    var it = arguments.length < 1 ? 0 : value;
@@ -1826,7 +1826,7 @@
 	var defineProperty$4 = Object.defineProperty;
 
 	// `Object.assign` method
-	// https://tc39.github.io/ecma262/#sec-object.assign
+	// 
 	var objectAssign = !nativeAssign || fails(function () {
 	  // should have correct order of operations (Edge bug)
 	  if (descriptors && nativeAssign({ b: 1 }, nativeAssign(defineProperty$4({}, 'a', {
@@ -1867,7 +1867,7 @@
 	} : nativeAssign;
 
 	// `Object.assign` method
-	// https://tc39.github.io/ecma262/#sec-object.assign
+	// 
 	_export({ target: 'Object', stat: true, forced: Object.assign !== objectAssign }, {
 	  assign: objectAssign
 	});
@@ -1895,17 +1895,17 @@
 
 	var objectToArray = {
 	  // `Object.entries` method
-	  // https://tc39.github.io/ecma262/#sec-object.entries
+	  // 
 	  entries: createMethod$3(true),
 	  // `Object.values` method
-	  // https://tc39.github.io/ecma262/#sec-object.values
+	  // 
 	  values: createMethod$3(false)
 	};
 
 	var $entries = objectToArray.entries;
 
 	// `Object.entries` method
-	// https://tc39.github.io/ecma262/#sec-object.entries
+	// 
 	_export({ target: 'Object', stat: true }, {
 	  entries: function entries(O) {
 	    return $entries(O);
@@ -1943,13 +1943,13 @@
 	};
 
 	// `Object.prototype.toString` method implementation
-	// https://tc39.github.io/ecma262/#sec-object.prototype.tostring
+	// 
 	var objectToString = toStringTagSupport ? {}.toString : function toString() {
 	  return '[object ' + classof(this) + ']';
 	};
 
 	// `Object.prototype.toString` method
-	// https://tc39.github.io/ecma262/#sec-object.prototype.tostring
+	// 
 	if (!toStringTagSupport) {
 	  redefine(Object.prototype, 'toString', objectToString, { unsafe: true });
 	}
@@ -1961,7 +1961,7 @@
 	var FORCED$2 = 1 / nativeParseFloat(whitespaces + '-0') !== -Infinity;
 
 	// `parseFloat` method
-	// https://tc39.github.io/ecma262/#sec-parsefloat-string
+	// 
 	var _parseFloat = FORCED$2 ? function parseFloat(string) {
 	  var trimmedString = trim$1(String(string));
 	  var result = nativeParseFloat(trimmedString);
@@ -1969,7 +1969,7 @@
 	} : nativeParseFloat;
 
 	// `parseFloat` method
-	// https://tc39.github.io/ecma262/#sec-parsefloat-string
+	// 
 	_export({ global: true, forced: parseFloat != _parseFloat }, {
 	  parseFloat: _parseFloat
 	});
@@ -1982,20 +1982,20 @@
 	var FORCED$3 = nativeParseInt(whitespaces + '08') !== 8 || nativeParseInt(whitespaces + '0x16') !== 22;
 
 	// `parseInt` method
-	// https://tc39.github.io/ecma262/#sec-parseint-string-radix
+	// 
 	var _parseInt = FORCED$3 ? function parseInt(string, radix) {
 	  var S = trim$2(String(string));
 	  return nativeParseInt(S, (radix >>> 0) || (hex.test(S) ? 16 : 10));
 	} : nativeParseInt;
 
 	// `parseInt` method
-	// https://tc39.github.io/ecma262/#sec-parseint-string-radix
+	// 
 	_export({ global: true, forced: parseInt != _parseInt }, {
 	  parseInt: _parseInt
 	});
 
 	// `RegExp.prototype.flags` getter implementation
-	// https://tc39.github.io/ecma262/#sec-get-regexp.prototype.flags
+	// 
 	var regexpFlags = function () {
 	  var that = anObject(this);
 	  var result = '';
@@ -2130,7 +2130,7 @@
 	var INCORRECT_NAME = nativeToString.name != TO_STRING;
 
 	// `RegExp.prototype.toString` method
-	// https://tc39.github.io/ecma262/#sec-regexp.prototype.tostring
+	// 
 	if (NOT_GENERIC || INCORRECT_NAME) {
 	  redefine(RegExp.prototype, TO_STRING, function toString() {
 	    var R = anObject(this);
@@ -2144,7 +2144,7 @@
 	var MATCH = wellKnownSymbol('match');
 
 	// `IsRegExp` abstract operation
-	// https://tc39.github.io/ecma262/#sec-isregexp
+	// 
 	var isRegexp = function (it) {
 	  var isRegExp;
 	  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
@@ -2171,7 +2171,7 @@
 	};
 
 	// `String.prototype.includes` method
-	// https://tc39.github.io/ecma262/#sec-string.prototype.includes
+	// 
 	_export({ target: 'String', proto: true, forced: !correctIsRegexpLogic('includes') }, {
 	  includes: function includes(searchString /* , position = 0 */) {
 	    return !!~String(requireObjectCoercible(this))
@@ -2197,10 +2197,10 @@
 
 	var stringMultibyte = {
 	  // `String.prototype.codePointAt` method
-	  // https://tc39.github.io/ecma262/#sec-string.prototype.codepointat
+	  // 
 	  codeAt: createMethod$4(false),
 	  // `String.prototype.at` method
-	  // https://github.com/mathiasbynens/String.prototype.at
+	  // 
 	  charAt: createMethod$4(true)
 	};
 
@@ -2213,7 +2213,7 @@
 	var getInternalState$2 = internalState.getterFor(STRING_ITERATOR);
 
 	// `String.prototype[@@iterator]` method
-	// https://tc39.github.io/ecma262/#sec-string.prototype-@@iterator
+	// 
 	defineIterator(String, 'String', function (iterated) {
 	  setInternalState$2(this, {
 	    type: STRING_ITERATOR,
@@ -2221,7 +2221,7 @@
 	    index: 0
 	  });
 	// `%StringIteratorPrototype%.next` method
-	// https://tc39.github.io/ecma262/#sec-%stringiteratorprototype%.next
+	// 
 	}, function next() {
 	  var state = getInternalState$2(this);
 	  var string = state.string;
@@ -2282,7 +2282,7 @@
 	    if (KEY === 'split') {
 	      // We can't use real regex here since it causes deoptimization
 	      // and serious performance degradation in V8
-	      // https://github.com/zloirock/core-js/issues/306
+	      // 
 	      re = {};
 	      // RegExp[@@split] doesn't call the regex's exec method, but first creates
 	      // a new one. We need to return the patched regex when creating the new one.
@@ -2337,13 +2337,13 @@
 	var charAt$1 = stringMultibyte.charAt;
 
 	// `AdvanceStringIndex` abstract operation
-	// https://tc39.github.io/ecma262/#sec-advancestringindex
+	// 
 	var advanceStringIndex = function (S, index, unicode) {
 	  return index + (unicode ? charAt$1(S, index).length : 1);
 	};
 
 	// `RegExpExec` abstract operation
-	// https://tc39.github.io/ecma262/#sec-regexpexec
+	// 
 	var regexpExecAbstract = function (R, S) {
 	  var exec = R.exec;
 	  if (typeof exec === 'function') {
@@ -2375,7 +2375,7 @@
 	fixRegexpWellKnownSymbolLogic('replace', 2, function (REPLACE, nativeReplace, maybeCallNative, reason) {
 	  return [
 	    // `String.prototype.replace` method
-	    // https://tc39.github.io/ecma262/#sec-string.prototype.replace
+	    // 
 	    function replace(searchValue, replaceValue) {
 	      var O = requireObjectCoercible(this);
 	      var replacer = searchValue == undefined ? undefined : searchValue[REPLACE];
@@ -2384,7 +2384,7 @@
 	        : nativeReplace.call(String(O), searchValue, replaceValue);
 	    },
 	    // `RegExp.prototype[@@replace]` method
-	    // https://tc39.github.io/ecma262/#sec-regexp.prototype-@@replace
+	    // 
 	    function (regexp, replaceValue) {
 	      if (reason.REPLACE_KEEPS_$0 || (typeof replaceValue === 'string' && replaceValue.indexOf('$0') === -1)) {
 	        var res = maybeCallNative(nativeReplace, regexp, this, replaceValue);
@@ -2445,7 +2445,7 @@
 	    }
 	  ];
 
-	  // https://tc39.github.io/ecma262/#sec-getsubstitution
+	  // 
 	  function getSubstitution(matched, str, position, captures, namedCaptures, replacement) {
 	    var tailPos = position + matched.length;
 	    var m = captures.length;
@@ -2481,7 +2481,7 @@
 	});
 
 	// `SameValue` abstract operation
-	// https://tc39.github.io/ecma262/#sec-samevalue
+	// 
 	var sameValue = Object.is || function is(x, y) {
 	  // eslint-disable-next-line no-self-compare
 	  return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
@@ -2491,14 +2491,14 @@
 	fixRegexpWellKnownSymbolLogic('search', 1, function (SEARCH, nativeSearch, maybeCallNative) {
 	  return [
 	    // `String.prototype.search` method
-	    // https://tc39.github.io/ecma262/#sec-string.prototype.search
+	    // 
 	    function search(regexp) {
 	      var O = requireObjectCoercible(this);
 	      var searcher = regexp == undefined ? undefined : regexp[SEARCH];
 	      return searcher !== undefined ? searcher.call(regexp, O) : new RegExp(regexp)[SEARCH](String(O));
 	    },
 	    // `RegExp.prototype[@@search]` method
-	    // https://tc39.github.io/ecma262/#sec-regexp.prototype-@@search
+	    // 
 	    function (regexp) {
 	      var res = maybeCallNative(nativeSearch, regexp, this);
 	      if (res.done) return res.value;
@@ -2518,7 +2518,7 @@
 	var SPECIES$4 = wellKnownSymbol('species');
 
 	// `SpeciesConstructor` abstract operation
-	// https://tc39.github.io/ecma262/#sec-speciesconstructor
+	// 
 	var speciesConstructor = function (O, defaultConstructor) {
 	  var C = anObject(O).constructor;
 	  var S;
@@ -2587,7 +2587,7 @@
 
 	  return [
 	    // `String.prototype.split` method
-	    // https://tc39.github.io/ecma262/#sec-string.prototype.split
+	    // 
 	    function split(separator, limit) {
 	      var O = requireObjectCoercible(this);
 	      var splitter = separator == undefined ? undefined : separator[SPLIT];
@@ -2596,7 +2596,7 @@
 	        : internalSplit.call(String(O), separator, limit);
 	    },
 	    // `RegExp.prototype[@@split]` method
-	    // https://tc39.github.io/ecma262/#sec-regexp.prototype-@@split
+	    // 
 	    //
 	    // NOTE: This cannot be properly polyfilled in engines that don't support
 	    // the 'y' flag.
@@ -2662,7 +2662,7 @@
 
 
 	// `String.prototype.trim` method
-	// https://tc39.github.io/ecma262/#sec-string.prototype.trim
+	// 
 	_export({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
 	  trim: function trim() {
 	    return $trim(this);
@@ -2709,7 +2709,7 @@
 
 
 	// `Array.prototype.forEach` method implementation
-	// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+	// 
 	var arrayForEach = sloppyArrayMethod('forEach') ? function forEach(callbackfn /* , thisArg */) {
 	  return $forEach$1(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
 	} : [].forEach;
@@ -3336,7 +3336,7 @@
 	var FAILS_ON_PRIMITIVES = fails(function () { objectKeys(1); });
 
 	// `Object.keys` method
-	// https://tc39.github.io/ecma262/#sec-object.keys
+	// 
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
 	  keys: function keys(it) {
 	    return objectKeys(toObject(it));
@@ -5499,7 +5499,7 @@
 	          _this9.toggleDetailView(rowIndex, _this9.header.detailFormatters[_this9.fieldsColumnsIndex[field]]);
 	        }
 	      }).off('mousedown').on('mousedown', function (e) {
-	        // https://github.com/jquery/jquery/issues/1741
+	        // 
 	        _this9.multipleSelectRowCtrlKey = e.ctrlKey || e.metaKey;
 	        _this9.multipleSelectRowShiftKey = e.shiftKey;
 	      });
