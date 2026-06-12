@@ -18,6 +18,9 @@ staticfiles/
 # OS
 .DS_Store
 
-# 用户上传文件（保留示例目录结构）
-upload/*/
-!upload/.gitkeep
+# Node / 前端构建产物
+node_modules/
+frontend/dist/
+
+# 环境变量
+.env

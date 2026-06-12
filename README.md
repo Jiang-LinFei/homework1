@@ -1,113 +1,85 @@
-# 机房信息管理系统（Django + MySQL + Redis）
+# 机房预约管理系统
 
-一个学生作业级别的机房信息管理系统，前端采用 INSPINIA Bootstrap 后台模板，界面较为美观。
-后端基于 **Django 4.2**，数据库使用 **MySQL**，缓存与会话使用 **Redis**。
-
-> 本项目前端模板基于开源项目 [lyk19940625/LaboratoryManagementSystem](https://github.com/lyk19940625/LaboratoryManagementSystem)，
-> 在其基础上整理为可运行的 Django 4.2 结构，并集成了 Redis（缓存 + 会话）。
-
-## 功能
-
-- 登录 / 注册（区分管理员、学生角色）
-- 机房任务发布、领取、放弃
-- 我的任务、任务进度、作业上传与下载
-- 上机考勤 / 签到统计
-- Django 后台管理（用户、任务、考勤等）
+按时间段 / 课表预约机房与机位，自动冲突检测、审批工作流、占用日历与利用率仪表盘。前后端分离，Docker Compose 一键部署。
 
 ## 技术栈
 
 | 层 | 技术 |
 | --- | --- |
-| Web 框架 | Django 4.2 |
-| 数据库 | MySQL（utf8mb4） |
-| 缓存 / 会话 | Redis（django-redis，`cached_db` 会话） |
-| 前端 | Bootstrap 3 + INSPINIA 模板 + jQuery |
+| 后端 | Python 3.10 · Django 3.2.25 · DRF 3.14 · SimpleJWT · django-redis |
+| 数据 | MySQL 5.7 · Redis 7 |
+| 前端 | Node 20 · Vue 3.4.38 · Vite 5.4.14 · Element Plus · Pinia · ECharts · FullCalendar |
+| 部署 | Docker Compose（Nginx 托管前端并反代 `/api`、gunicorn 跑后端） |
 
-## 环境要求
+## 功能
 
-- Python 3.10+
-- MySQL 5.7+ / MariaDB 10.4+
-- Redis 5+
+- 角色：管理员 / 教师 / 学生（JWT 登录，按角色控制菜单与接口）
+- 机房 / 机位 / 节次管理
+- 预约：按节次或自定义时间预约整间机房或指定机位，**提交时自动冲突检测**
+- 审批流：学生/教师提交 → 教师/管理员通过或驳回
+- 排课：给机房排周期性课程，参与冲突检测与占用展示
+- 占用日历：FullCalendar 周/日/月视图，预约（蓝）与排课（橙）一图呈现
+- 仪表盘：预约总数、通过率、状态分布、机房 Top5、近 7 日趋势
 
-## 快速开始（Windows 一键脚本）
-
-在项目根目录用 PowerShell 执行（需安装 Docker Desktop，脚本会自动拉起 MySQL 与 Redis 容器）：
-
-```powershell
-# 若提示禁止运行脚本，先执行一次：
-# Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-.\run.ps1
-```
-
-脚本会自动完成：建虚拟环境 → 装依赖 → 启动 MySQL/Redis → 迁移 → 演示数据 → 启动服务。
-
-## 快速开始（Linux / macOS / 手动）
+## 快速开始（Docker，推荐）
 
 ```bash
-# 1. 创建并激活虚拟环境
-python3 -m venv .venv
-source .venv/bin/activate
-# Windows PowerShell 激活方式： .\.venv\Scripts\Activate.ps1
-
-# 2. 安装依赖
-pip install -r requirements.txt
-
-# 3. 准备数据库（MySQL）
-#    默认连接：库 lab_management / 用户 lab / 密码 lab123456
-mysql -uroot -p -e "CREATE DATABASE lab_management CHARACTER SET utf8mb4;"
-mysql -uroot -p -e "CREATE USER 'lab'@'localhost' IDENTIFIED BY 'lab123456'; \
-                    GRANT ALL ON lab_management.* TO 'lab'@'localhost'; FLUSH PRIVILEGES;"
-
-# 4. 确保 Redis 已启动（默认 redis://127.0.0.1:6379/1）
-
-# 5. 迁移数据库
-python manage.py migrate
-
-# 6. 初始化演示数据（可选）
-python manage.py init_demo
-
-# 7. 启动开发服务器
-python manage.py runserver 0.0.0.0:8000
+cp .env.example .env      # 按需修改密码/端口
+docker compose up -d --build
 ```
 
-打开 http://127.0.0.1:8000/ 即可访问。
+启动后访问 `http://服务器IP:8080`（端口由 `.env` 的 `WEB_PORT` 控制）。
+首次启动会自动建表并生成演示数据。
 
-## 演示账号（执行 `init_demo` 后）
+演示账号：
 
-| 角色 | 账号(uid) | 密码 |
+| 角色 | 账号 | 密码 |
 | --- | --- | --- |
-| 管理员 | `2001` | `123456` |
-| 学生 | `2002` | `123456` |
-| 学生 | `2003` | `123456` |
-| 后台超级用户 | `admin` | `admin123456` |
+| 管理员 | `admin` | `admin` |
+| 教师 | `teacher` | `teacher` |
+| 学生 | `student` | `student` |
 
-Django 后台地址：http://127.0.0.1:8000/admin/
+Django 后台：`http://服务器IP:8080/admin/`（用 `admin` / `admin`）。
 
-## 配置（环境变量）
+## 本地开发
 
-所有连接信息都可以通过环境变量覆盖，默认值见 `LaboratoryManagementSystem/settings.py`：
+后端：
 
-| 变量 | 默认值 | 说明 |
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+# 默认连接 127.0.0.1:3307 的 MySQL 与 127.0.0.1:6380 的 Redis，可用环境变量覆盖
+python manage.py migrate
+python manage.py init_demo
+python manage.py runserver        # http://127.0.0.1:8000
+```
+
+前端：
+
+```bash
+cd frontend
+npm install
+npm run dev                       # http://127.0.0.1:5173，已配置 /api 代理到 :8000
+```
+
+## 主要环境变量
+
+| 变量 | 说明 | 默认 |
 | --- | --- | --- |
-| `MYSQL_DATABASE` | `lab_management` | 数据库名 |
-| `MYSQL_USER` | `lab` | 数据库用户 |
-| `MYSQL_PASSWORD` | `lab123456` | 数据库密码 |
-| `MYSQL_HOST` | `127.0.0.1` | 数据库地址 |
-| `MYSQL_PORT` | `3306` | 数据库端口 |
-| `REDIS_URL` | `redis://127.0.0.1:6379/1` | Redis 连接 |
-| `DJANGO_DEBUG` | `True` | 调试模式 |
-| `DJANGO_SECRET_KEY` | （内置开发用） | 生产环境务必修改 |
+| `DB_HOST` / `DB_PORT` | MySQL 地址 | `mysql` / `3306`（compose 内） |
+| `DB_NAME` / `DB_USER` / `DB_PASSWORD` | 数据库名/账号/密码 | `jifang` / `jifang` / `jifang123` |
+| `REDIS_URL` | Redis 连接串 | `redis://redis:6379/1` |
+| `SECRET_KEY` | Django 密钥（生产务必修改） | 开发占位值 |
+| `DEBUG` | 调试模式 | `false` |
+| `INIT_DEMO` | 首启是否灌演示数据 | `true` |
+| `WEB_PORT` | 前端对外端口 | `8080` |
 
 ## 目录结构
 
 ```
-.
-├── manage.py
-├── requirements.txt
-├── LaboratoryManagementSystem/   # 项目配置包（settings/urls/wsgi/asgi）
-├── LMS/                          # 业务应用（models/views/admin/migrations）
-│   └── management/commands/init_demo.py
-├── templates/                    # 页面模板
-├── static/                       # 静态资源（INSPINIA 模板）
-└── upload/                       # 作业上传目录
+backend/            Django 项目（config + apps：accounts/rooms/bookings/schedules/stats/common）
+frontend/           Vue3 + Vite SPA
+docker-compose.yml  四服务编排（mysql/redis/backend/frontend）
+docs/               设计文档与实现计划
 ```
