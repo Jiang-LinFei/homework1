@@ -1,0 +1,41 @@
+/* 设计令牌 — 由 ui-ux-pro-max「Data-Dense Dashboard」推荐：日历蓝 + 事件绿 */
+:root {
+  --color-primary: #2563eb;
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1d4ed8;
+  --color-accent: #059669;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-foreground: #0f172a;
+  --color-muted: #f1f5fd;
+  --color-muted-foreground: #64748b;
+  --color-border: #e4ecfc;
+  --color-destructive: #dc2626;
+  --color-warning: #e6a23c;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* Element Plus 主题覆盖 */
+  --el-color-primary: #2563eb;
+  --el-color-primary-light-3: #5b8def;
+  --el-color-primary-light-5: #8bb0f4;
+  --el-color-primary-light-7: #bcd0f9;
+  --el-color-primary-light-8: #d4e0fb;
+  --el-color-primary-light-9: #ebf2fe;
+  --el-color-primary-dark-2: #1d4ed8;
+  --el-color-success: #059669;
+  --el-color-warning: #e6a23c;
+  --el-color-danger: #dc2626;
+  --el-border-radius-base: 8px;
+  --el-font-family: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC',
+    -apple-system, 'Segoe UI', sans-serif;
+}
