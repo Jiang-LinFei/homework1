@@ -31,6 +31,8 @@ docker compose up -d --build
 启动后访问 `http://服务器IP:8080`（端口由 `.env` 的 `WEB_PORT` 控制）。
 首次启动会自动建表并生成演示数据。
 
+> CentOS 8 + 宝塔的完整部署步骤（装 Docker、放行端口、域名 HTTPS、备份、FAQ）见 [DEPLOYMENT.md](./DEPLOYMENT.md)。
+
 演示账号：
 
 | 角色 | 账号 | 密码 |
