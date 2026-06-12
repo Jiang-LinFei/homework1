@@ -59,7 +59,7 @@ def loginVerify(request):
                     return JsonResponse({'res': 2})
             else:
                 return JsonResponse({'res': 0})
-        except User.DoesNotExist:
+        except (User.DoesNotExist, ValueError):
             return JsonResponse({'res': -1})
     return JsonResponse({'res': 100})
 

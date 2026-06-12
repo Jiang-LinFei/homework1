@@ -25,7 +25,8 @@
                 <h1 class="logo-name"><a href="http://www.shiep.edu.cn/"  target="_blank" ><img class="school-img"/></a></h1>
             </div>
             <h3>机房信息管理系统</h3>
-            <form class="m-t" role="form" action="index.html">
+            <div id="login-msg" class="alert alert-danger" style="display:none; text-align:left;"></div>
+            <form class="m-t" role="form" action="#">
                 <div class="form-group">
                     <input type="username" id="uid" class="form-control" placeholder="账号" required="">
                 </div>
@@ -47,37 +48,47 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/layer.js"></script>
     <script type="text/javascript">
-		$("#submit").click(function() {
+		function showLoginMsg(text, type) {
+			var $m = $("#login-msg");
+			$m.removeClass("alert-danger alert-success alert-warning");
+			$m.addClass(type || "alert-danger");
+			$m.text(text).stop(true, true).fadeIn();
+		}
+		function doLogin() {
+			var uid = $.trim($("#uid").val());
+			var pwd = $("#password").val();
+			if (!uid) { showLoginMsg("请输入账号", "alert-warning"); return; }
+			if (!pwd) { showLoginMsg("请输入密码", "alert-warning"); return; }
+			$("#submit").prop("disabled", true).text("登录中...");
 			$.ajax({
 				type : "POST",
 				dataType : "json",
-				data : {
-					"uid" : $("#uid").val(),
-					"password" : $("#password").val()
-				},
+				data : { "uid" : uid, "password" : pwd },
 				url : "login/",
 				success : function(data) {
-					if(data.res==1){
-						location.href='index/';
-					}
-					else if(data.res==0){
-						alert("密码错误");
-					}
-					else if(data.res==-1){
-						alert("用户名不存在！")
-					}
-					else if(data.res==100){
-						alert("方法错误！")
-					}
-					else if(data.res==2){
-						location.href='index/'
+					if (data.res == 1 || data.res == 2) {
+						showLoginMsg("登录成功，正在跳转...", "alert-success");
+						location.href = 'index/';
+					} else if (data.res == 0) {
+						showLoginMsg("密码错误，请重新输入");
+					} else if (data.res == -1) {
+						showLoginMsg("该账号不存在，请检查账号或先注册（前台账号是用户编号，如 2002，不是 admin）");
+					} else {
+						showLoginMsg("登录失败，请稍后重试");
 					}
 				},
-				error:function(a,b,c){
-				  var i = 1;
+				error : function() {
+					showLoginMsg("无法连接服务器，请确认服务已启动后重试");
+				},
+				complete : function() {
+					$("#submit").prop("disabled", false).text("登录");
 				}
-			})
-		})
+			});
+		}
+		$("#submit").click(doLogin);
+		$("#uid, #password").keydown(function(e) {
+			if (e.keyCode === 13) { e.preventDefault(); doLogin(); }
+		});
 	</script>
 
 </body>
